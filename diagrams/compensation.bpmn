@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Defs_Broken" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.52.0">
+  <bpmn:collaboration id="Collab_Broken">
+    <bpmn:participant id="P_Client" name="Клиент" processRef="Proc_Client" />
+    <bpmn:participant id="P_Company" name="Компания" processRef="Proc_Company" />
+    <bpmn:messageFlow id="Flow_1u64n1s" sourceRef="K_Notify" targetRef="C_Wait" />
+    <bpmn:messageFlow id="Flow_0ddy8md" sourceRef="Activity_0jowvy1" targetRef="Event_0b4ofuq" />
+  </bpmn:collaboration>
+  <bpmn:process id="Proc_Client" isExecutable="false">
+    <bpmn:intermediateCatchEvent id="C_Wait" name="Ответ получен">
+      <bpmn:incoming>Flow_0hevmpr</bpmn:incoming>
+      <bpmn:outgoing>CF3</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_C_Wait" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="C_End" name="Вопрос закрыт">
+      <bpmn:incoming>CF3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="CF3" sourceRef="C_Wait" targetRef="C_End" />
+    <bpmn:task id="Activity_0jowvy1" name="Отправить жалобу">
+      <bpmn:outgoing>Flow_0hevmpr</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0hevmpr" sourceRef="Activity_0jowvy1" targetRef="C_Wait" />
+  </bpmn:process>
+  <bpmn:process id="Proc_Company" isExecutable="false">
+    <bpmn:laneSet id="LS_Proc_Company">
+      <bpmn:lane id="L_Acc" name="Бухгалтерия">
+        <bpmn:flowNodeRef>K_Pay</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_Lead" name="Руководитель смены">
+        <bpmn:flowNodeRef>K_Approve</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="L_Op" name="Оператор">
+        <bpmn:flowNodeRef>K_Check</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_Refuse</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_Calc</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_G2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_G3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_Log</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_Notify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_End</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_G4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_G5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>K_G1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_0b4ofuq</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1mxeqzb</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:task id="K_Check" name="Проверить факт просрочки">
+      <bpmn:incoming>Flow_12zi5tr</bpmn:incoming>
+      <bpmn:outgoing>KF1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="K_Refuse" name="Подготовить отказ с объяснением">
+      <bpmn:incoming>KF3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1d5s2y4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="K_Calc" name="Рассчитать компенсацию">
+      <bpmn:incoming>KF2</bpmn:incoming>
+      <bpmn:outgoing>KF4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="K_G2" name="Компенсация больше 5000 ₽?">
+      <bpmn:incoming>KF4</bpmn:incoming>
+      <bpmn:outgoing>KF5</bpmn:outgoing>
+      <bpmn:outgoing>KF6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="K_Approve" name="Согласовать компенсацию">
+      <bpmn:incoming>KF5</bpmn:incoming>
+      <bpmn:outgoing>KF7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="K_G3">
+      <bpmn:incoming>KF6</bpmn:incoming>
+      <bpmn:incoming>KF7</bpmn:incoming>
+      <bpmn:outgoing>KF8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="K_Log" name="Записать компенсацию в историю обращения">
+      <bpmn:incoming>KF9</bpmn:incoming>
+      <bpmn:outgoing>KF11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="K_Notify" name="Уведомить клиента о решении">
+      <bpmn:incoming>Flow_0cg3bb4</bpmn:incoming>
+      <bpmn:outgoing>KF16</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="K_End" name="Решение по жалобе принято">
+      <bpmn:incoming>KF16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="KF1" sourceRef="K_Check" targetRef="K_G1" />
+    <bpmn:sequenceFlow id="KF2" name="Да" sourceRef="K_G1" targetRef="K_Calc" />
+    <bpmn:sequenceFlow id="KF3" name="Нет" sourceRef="K_G1" targetRef="K_Refuse" />
+    <bpmn:sequenceFlow id="KF4" sourceRef="K_Calc" targetRef="K_G2" />
+    <bpmn:sequenceFlow id="KF5" name="Да" sourceRef="K_G2" targetRef="K_Approve" />
+    <bpmn:sequenceFlow id="KF6" name="Нет" sourceRef="K_G2" targetRef="K_G3" />
+    <bpmn:sequenceFlow id="KF7" sourceRef="K_Approve" targetRef="K_G3" />
+    <bpmn:sequenceFlow id="KF8" sourceRef="K_G3" targetRef="K_G4" />
+    <bpmn:sequenceFlow id="KF9" sourceRef="K_G4" targetRef="K_Log" />
+    <bpmn:sequenceFlow id="KF10" sourceRef="K_G4" targetRef="K_Pay" />
+    <bpmn:sequenceFlow id="KF16" sourceRef="K_Notify" targetRef="K_End" />
+    <bpmn:task id="K_Pay" name="Перечислить компенсацию">
+      <bpmn:incoming>KF10</bpmn:incoming>
+      <bpmn:outgoing>KF12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="K_G4">
+      <bpmn:incoming>KF8</bpmn:incoming>
+      <bpmn:outgoing>KF9</bpmn:outgoing>
+      <bpmn:outgoing>KF10</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="KF13" sourceRef="K_G5" targetRef="Gateway_1mxeqzb" />
+    <bpmn:sequenceFlow id="KF12" sourceRef="K_Pay" targetRef="K_G5" />
+    <bpmn:sequenceFlow id="KF11" sourceRef="K_Log" targetRef="K_G5" />
+    <bpmn:parallelGateway id="K_G5">
+      <bpmn:incoming>KF11</bpmn:incoming>
+      <bpmn:incoming>KF12</bpmn:incoming>
+      <bpmn:outgoing>KF13</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1d5s2y4" sourceRef="K_Refuse" targetRef="Gateway_1mxeqzb" />
+    <bpmn:exclusiveGateway id="K_G1" name="Просрочка подтверждена?">
+      <bpmn:incoming>KF1</bpmn:incoming>
+      <bpmn:outgoing>KF2</bpmn:outgoing>
+      <bpmn:outgoing>KF3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="Event_0b4ofuq" name="Получена жалоба">
+      <bpmn:outgoing>Flow_12zi5tr</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0094rux" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_12zi5tr" sourceRef="Event_0b4ofuq" targetRef="K_Check" />
+    <bpmn:exclusiveGateway id="Gateway_1mxeqzb">
+      <bpmn:incoming>KF13</bpmn:incoming>
+      <bpmn:incoming>Flow_1d5s2y4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cg3bb4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0cg3bb4" sourceRef="Gateway_1mxeqzb" targetRef="K_Notify" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Dia_Broken">
+    <bpmndi:BPMNPlane id="Plane_Broken" bpmnElement="Collab_Broken">
+      <bpmndi:BPMNShape id="P_Client_di" bpmnElement="P_Client" isHorizontal="true">
+        <dc:Bounds x="160" y="60" width="1600" height="130" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_Wait_di" bpmnElement="C_Wait">
+        <dc:Bounds x="1562" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1543" y="63" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="C_End_di" bpmnElement="C_End">
+        <dc:Bounds x="1682" y="107" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1662" y="147" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jowvy1_di" bpmnElement="Activity_0jowvy1">
+        <dc:Bounds x="210" y="85" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="CF3_di" bpmnElement="CF3">
+        <di:waypoint x="1598" y="125" />
+        <di:waypoint x="1682" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hevmpr_di" bpmnElement="Flow_0hevmpr">
+        <di:waypoint x="310" y="125" />
+        <di:waypoint x="1562" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="P_Company_di" bpmnElement="P_Company" isHorizontal="true">
+        <dc:Bounds x="160" y="220" width="1600" height="540" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_Op_di" bpmnElement="L_Op" isHorizontal="true">
+        <dc:Bounds x="190" y="220" width="1570" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_Lead_di" bpmnElement="L_Lead" isHorizontal="true">
+        <dc:Bounds x="190" y="480" width="1570" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="L_Acc_di" bpmnElement="L_Acc" isHorizontal="true">
+        <dc:Bounds x="190" y="620" width="1570" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Check_di" bpmnElement="K_Check">
+        <dc:Bounds x="435" y="370" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Refuse_di" bpmnElement="K_Refuse">
+        <dc:Bounds x="665" y="235" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Calc_di" bpmnElement="K_Calc">
+        <dc:Bounds x="665" y="370" width="110" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_G2_di" bpmnElement="K_G2" isMarkerVisible="true">
+        <dc:Bounds x="810" y="385" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="794" y="355" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Approve_di" bpmnElement="K_Approve">
+        <dc:Bounds x="890" y="510" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_G3_di" bpmnElement="K_G3" isMarkerVisible="true">
+        <dc:Bounds x="1035" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Log_di" bpmnElement="K_Log">
+        <dc:Bounds x="1205" y="370" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Notify_di" bpmnElement="K_Notify">
+        <dc:Bounds x="1525" y="370" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_End_di" bpmnElement="K_End">
+        <dc:Bounds x="1682" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1659" y="432" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_Pay_di" bpmnElement="K_Pay">
+        <dc:Bounds x="1205" y="650" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="K_G4_di" bpmnElement="K_G4">
+        <dc:Bounds x="1120" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1y3e61c_di" bpmnElement="K_G5">
+        <dc:Bounds x="1350" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_195gwtd_di" bpmnElement="K_G1" isMarkerVisible="true">
+        <dc:Bounds x="580" y="385" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="565" y="439" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10sa322_di" bpmnElement="Event_0b4ofuq">
+        <dc:Bounds x="242" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="235" y="435" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1mxeqzb_di" bpmnElement="Gateway_1mxeqzb" isMarkerVisible="true">
+        <dc:Bounds x="1425" y="385" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="KF1_di" bpmnElement="KF1">
+        <di:waypoint x="545" y="410" />
+        <di:waypoint x="580" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF2_di" bpmnElement="KF2">
+        <di:waypoint x="630" y="410" />
+        <di:waypoint x="665" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="642" y="392" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF3_di" bpmnElement="KF3">
+        <di:waypoint x="605" y="385" />
+        <di:waypoint x="605" y="275" />
+        <di:waypoint x="665" y="275" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="618" y="281" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF4_di" bpmnElement="KF4">
+        <di:waypoint x="775" y="410" />
+        <di:waypoint x="810" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF5_di" bpmnElement="KF5">
+        <di:waypoint x="835" y="435" />
+        <di:waypoint x="835" y="550" />
+        <di:waypoint x="890" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="843" y="489.5" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF6_di" bpmnElement="KF6">
+        <di:waypoint x="860" y="410" />
+        <di:waypoint x="1035" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="938" y="392" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF7_di" bpmnElement="KF7">
+        <di:waypoint x="1000" y="550" />
+        <di:waypoint x="1060" y="550" />
+        <di:waypoint x="1060" y="435" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF8_di" bpmnElement="KF8">
+        <di:waypoint x="1085" y="410" />
+        <di:waypoint x="1120" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF9_di" bpmnElement="KF9">
+        <di:waypoint x="1170" y="410" />
+        <di:waypoint x="1205" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF10_di" bpmnElement="KF10">
+        <di:waypoint x="1145" y="435" />
+        <di:waypoint x="1145" y="690" />
+        <di:waypoint x="1205" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF16_di" bpmnElement="KF16">
+        <di:waypoint x="1635" y="410" />
+        <di:waypoint x="1682" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF13_di" bpmnElement="KF13">
+        <di:waypoint x="1400" y="410" />
+        <di:waypoint x="1425" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF12_di" bpmnElement="KF12">
+        <di:waypoint x="1315" y="690" />
+        <di:waypoint x="1375" y="690" />
+        <di:waypoint x="1375" y="435" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="KF11_di" bpmnElement="KF11">
+        <di:waypoint x="1315" y="410" />
+        <di:waypoint x="1350" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1d5s2y4_di" bpmnElement="Flow_1d5s2y4">
+        <di:waypoint x="775" y="275" />
+        <di:waypoint x="1450" y="275" />
+        <di:waypoint x="1450" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12zi5tr_di" bpmnElement="Flow_12zi5tr">
+        <di:waypoint x="278" y="410" />
+        <di:waypoint x="435" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cg3bb4_di" bpmnElement="Flow_0cg3bb4">
+        <di:waypoint x="1475" y="410" />
+        <di:waypoint x="1525" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u64n1s_di" bpmnElement="Flow_1u64n1s">
+        <di:waypoint x="1580" y="370" />
+        <di:waypoint x="1580" y="143" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ddy8md_di" bpmnElement="Flow_0ddy8md">
+        <di:waypoint x="260" y="165" />
+        <di:waypoint x="260" y="392" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
